@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#073b2b">
+<title>Islamic Quiz World | PEERXADAOWAIS</title>
+<style>
+:root{--green:#075b40;--gold:#e8bd58;--bg:#f4f7f4;--ink:#17231d}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink)}
+header{background:linear-gradient(135deg,#063c2c,#08714c);color:white;text-align:center;padding:30px 16px 26px}
+.logo{font-size:38px}h1{margin:8px 0 4px;font-size:28px}header p{margin:5px 0;color:#e5f4ec}
+main{max-width:720px;margin:22px auto;padding:0 14px}.panel{background:white;border-radius:18px;padding:22px;box-shadow:0 5px 22px #173b2512;margin-bottom:16px}
+h2{margin-top:0;color:#075b40}.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+button{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:13px 16px}
+.level{background:#e9f3ed;color:#075b40;font-weight:700}.level:hover,.level:focus{outline:2px solid var(--gold)}
+.primary{background:var(--green);color:white;font-weight:700;width:100%;margin-top:14px}
+.meta{display:flex;justify-content:space-between;gap:10px;color:#52665b;font-size:14px;margin-bottom:12px}
+.progress{height:8px;background:#e7eee9;border-radius:20px;overflow:hidden;margin:12px 0 20px}.bar{height:100%;background:#d4a83d;width:0}
+#question{font-size:21px;font-weight:750;line-height:1.4;margin:12px 0 18px}
+.option{display:block;width:100%;text-align:left;background:#f1f6f2;border:1px solid #dce8df;margin:9px 0;color:#20372a}
+.option:focus,.option:hover{border-color:#0b8058}.option.correct{background:#e0f5e8;border-color:#23965d}.option.wrong{background:#fff0ed;border-color:#d66b58}
+#feedback{font-weight:650;min-height:26px;margin-top:12px}.hidden{display:none}
+footer{text-align:center;color:#66766c;padding:18px;font-size:13px}
+@media(max-width:480px){.levels{grid-template-columns:1fr}.panel{padding:18px}h1{font-size:24px}}
+</style>
+</head>
+<body>
+<header><div class="logo">🌙</div><h1>Islamic Quiz World</h1><p>Learn • Play • Improve Your Islamic Knowledge</p><p>Created by <strong>PEERXADAOWAIS</strong></p></header>
+<main>
+<section class="panel" id="home">
+<h2>Assalamu Alaikum! 🤍</h2>
+<p>Choose your level and test your Islamic knowledge. Har level mein 5 sawal hain.</p>
+<div class="levels">
+<button class="level" onclick="start(0)">Level 1 · Easy</button>
+<button class="level" onclick="start(1)">Level 2 · Medium</button>
+<button class="level" onclick="start(2)">Level 3 · Challenge</button>
+</div>
+</section>
+<section class="panel hidden" id="game">
+<div class="meta"><span id="levelLabel">Level 1</span><span id="timer">⏱ 20 sec</span><span id="score">⭐ 0 points</span></div>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<div class="meta"><span id="count">Question 1/5</span><span>Choose one answer</span></div>
+<div id="question"></div><div id="options"></div><div id="feedback" aria-live="polite"></div>
+<button class="primary hidden" id="next" onclick="nextQuestion()">Next Question</button>
+</section>
+<section class="panel hidden" id="result">
+<h2>Quiz Complete! 🎉</h2><p id="resultText"></p><button class="primary" onclick="goHome()">Play Again</button>
+</section>
+</main>
+<footer>Respectful learning • Islamic Quiz World © 2026</footer>
+<script>
+const quizzes=[
+[
+["Qur’an Majeed mein kitni Surah hain?",["110","112","114","116"],2],
+["Islam ke kitne pillars hain?",["4","5","6","7"],1],
+["Muslim kis taraf rukh karke namaz padhte hain?",["Masjid-e-Nabawi","Kaaba","Mount Uhud","Jerusalem"],1],
+["Ramadan ke rozay kis Islamic month mein hote hain?",["Shawwal","Muharram","Ramadan","Rajab"],2],
+["Qur’an Majeed kis zubaan mein nazil hua?",["Arabic","Urdu","Persian","Turkish"],0]
+],
+[
+["Qur’an ki pehli wahi kis ghaar mein nazil hui?",["Ghaar-e-Thawr","Ghaar-e-Hira","Ghaar-e-Uhud","Ghaar-e-Badr"],1],
+["Hijri calendar ka pehla mahina kaunsa hai?",["Ramadan","Safar","Muharram","Rajab"],2],
+["Zakat aam tor par maal ka kitna hissa hoti hai (eligible savings par)?",["1%","2.5%","5%","10%"],1],
+["Kaunsi Surah Qur’an ki sabse lambi Surah hai?",["Al-Fatiha","Al-Baqarah","Yaseen","Al-Ikhlas"],1],
+["Hajj kis Islamic month mein ada kiya jata hai?",["Dhul-Hijjah","Shawwal","Safar","Rabi al-Awwal"],0]
+],
+[
+["Qur’an Majeed mein kis Nabi ka naam sabse zyada martaba aata hai?",["Musa (AS)","Isa (AS)","Ibrahim (AS)","Nuh (AS)"],0],
+["Sulh-e-Hudaybiyyah kis Hijri saal mein hui?",["2 AH","4 AH","6 AH","8 AH"],2],
+["Kaunsi Surah Bismillah ke baghair shuru hoti hai?",["At-Tawbah","An-Naml","Al-Kahf","Maryam"],0],
+["Ghazwa-e-Badr kis Hijri saal mein hua?",["1 AH","2 AH","3 AH","5 AH"],1],
+["Qur’an mein kitne para (juz) hain?",["20","25","30","40"],2]
+]
+];
+let level=0,index=0,points=0,time=20,clock=null,locked=false;
+function start(n){level=n;index=0;points=0;document.getElementById('home').classList.add('hidden');document.getElementById('result').classList.add('hidden');document.getElementById('game').classList.remove('hidden');showQuestion()}
+function showQuestion(){locked=false;time=20;const q=quizzes[level][index];document.getElementById('levelLabel').textContent='Level '+(level+1);document.getElementById('score').textContent='⭐ '+points+' points';document.getElementById('count').textContent='Question '+(index+1)+'/5';document.getElementById('question').textContent=q[0];document.getElementById('feedback').textContent='';document.getElementById('next').classList.add('hidden');document.getElementById('bar').style.width=(index/5*100)+'%';const box=document.getElementById('options');box.innerHTML='';q[1].forEach((a,i)=>{const b=document.createElement('button');b.className='option';b.textContent=String.fromCharCode(65+i)+'. '+a;b.onclick=()=>answer(i);box.appendChild(b)});updateTimer();clearInterval(clock);clock=setInterval(()=>{time--;updateTimer();if(time<=0){clearInterval(clock);answer(-1)}},1000)}
+function updateTimer(){document.getElementById('timer').textContent='⏱ '+time+' sec'}
+function answer(choice){if(locked)return;locked=true;clearInterval(clock);const q=quizzes[level][index],buttons=[...document.querySelectorAll('.option')];buttons.forEach((b,i)=>{b.disabled=true;if(i===q[2])b.classList.add('correct');if(i===choice&&choice!==q[2])b.classList.add('wrong')});if(choice===q[2]){points+=10;document.getElementById('feedback').textContent='Correct! MashaAllah, +10 points 🌟'}else{document.getElementById('feedback').textContent='Correct answer: '+q[1][q[2]]}document.getElementById('score').textContent='⭐ '+points+' points';document.getElementById('next').textContent=index===4?'See Result':'Next Question';document.getElementById('next').classList.remove('hidden')}
+function nextQuestion(){index++;if(index>=5){clearInterval(clock);document.getElementById('game').classList.add('hidden');document.getElementById('result').classList.remove('hidden');document.getElementById('resultText').textContent='You scored '+points+' out of 50 points in Level '+(level+1)+'. Keep learning and keep improving!';}else showQuestion()}
+function goHome(){document.getElementById('result').classList.add('hidden');document.getElementById('home').classList.remove('hidden')}
+</script>
+</body></html>
